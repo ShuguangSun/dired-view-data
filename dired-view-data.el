@@ -50,7 +50,7 @@
 
 ;;; Code:
 
-(require 'dired)
+(require 'dired-x)
 (require 'ess-r-mode)
 (require 'ess-inf)
 (require 'ess-view-data)
@@ -68,7 +68,7 @@
   :group 'dired-view-data)
 
 (defcustom dired-view-data-use-DT-p nil
-  "If `t', using DT for display."
+  "If t, using DT for display."
   :type 'bool
   :group 'dired-view-data)
 
@@ -125,14 +125,16 @@ by `ess-send-string'."
 
 
 (defun dired-view-data-view (dt)
-  "Function for displaying data."
+  "Function for displaying data.
+Argument DT dataset."
   (if dired-view-data-use-DT-p
       (let ((ess-view-data-current-backend "dplyr+DT"))
         (pop-to-buffer (ess-view-data-print-ex dt)))
       (pop-to-buffer (ess-view-data-print-ex dt))))
 
 (defun dired-view-data--do (file-name)
-  "Read data from dired."
+  "Read data from dired.
+Argument FILE-NAME file-name to the dataset."
   (save-excursion
     (let* ((default-directory (or dired-view-data-default-directory default-directory))
            (ess-history-file dired-view-data-history-file)
