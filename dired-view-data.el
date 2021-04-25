@@ -1,4 +1,4 @@
-;;; dired-view-data.el --- View data from dired via ESS  -*- lexical-binding: t; -*-
+;;; dired-view-data.el --- View data from dired via ESS and R  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Shuguang Sun
 
@@ -88,6 +88,11 @@ nil is from the data directory.
 A directory means start the R session from it globally."
   :type 'directory
   :safe 'stringp
+  :group 'dired-view-data)
+
+(defcustom dired-view-data-guess-shell-alist-p t
+  "Whether to add `dired-view-data' to `dired-guess-shell-alist-user'."
+  :type 'bool
   :group 'dired-view-data)
 
 
@@ -197,6 +202,52 @@ Argument FILE-NAME file-name to the dataset."
                           (if (eq system-type 'windows-nt)  ;; for w32
                               (w32-shell-execute "open" file-name nil 1)))))))
 
+
+(defvar dired-view-data-mode-hook nil
+  "Hook run when `dired-view-data-mode' is turned on.")
+
+(defun dired-view-data-guess-shell-alist ()
+  "Add alist to `dired-guess-shell-alist-user'."
+  (interactive)
+  (when (derived-mode-p 'dired-mode)
+    (add-to-list (make-local-variable dired-guess-shell-alist-user)
+                 (list "\\.\\(sas7bdat\\|xpt\\|rds\\|csv\\|rda\\|rdata\\)$"
+                       '(progn
+                          (if (y-or-n-p-with-timeout "Read to R? " 4 nil)
+                              (progn
+                                (dired-view-data--do (dired-get-filename))
+                                (keyboard-quit))
+                            (if (eq system-type 'windows-nt)  ;; for w32
+                                (w32-shell-execute "open" file-name nil 1))))))))
+
+(defvar dired-view-data-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "V") #'dired-view-data)
+    (define-key map "\C-c&\C-v" #'dired-view-data)
+    map)
+  "The keymap used when `dired-view-data-mode' is active.")
+
+;;;###autoload
+(define-minor-mode dired-view-data-mode
+  "Enable additional font locking in `dired-mode'."
+  :lighter " DVD"
+  :keymap dired-view-data-mode-map
+  :group 'dired-view-data
+  (when (derived-mode-p 'dired-mode)
+    (when dired-view-data-mode
+      (if dired-view-data-guess-shell-alist-p
+          (dired-view-data-guess-shell-alist))
+      (message "View data from dired via ESS-r."))))
+
+;;;###autoload
+(defun dired-view-data-mode-on ()
+  "Turn on `dired-view-data-mode'."
+  (interactive)
+  (dired-view-data-mode 1))
+
+;;;###autoload
+(define-globalized-minor-mode dired-view-data-global-mode dired-view-data-mode
+  dired-view-data-mode-on)
 
 (provide 'dired-view-data)
 ;;; dired-view-data.el ends here

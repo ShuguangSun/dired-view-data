@@ -8,12 +8,16 @@ Clone this repository (TODO:, or install from MELPA). Add the following to your 
 
 ``` elisp
 (require 'dired-view-data)
+
+;; global-minor-mode to `dired-mode'
+(dired-view-data-global-mode)
+;; or call minor-mode in dired buffer mannualy
+(dired-view-data-mode 1)
 ```
 
-In dired buffer, call `dired-view-data` on a data file (e.g., sas7bdat, xpt, rds, cs, rda or rdata), and buffer will pop up with data displayed.
+In dired buffer, call `dired-view-data` (`V` or `C-c C-v`) on a data file (e.g., sas7bdat, xpt, rds, cs, rda or rdata), and buffer will pop up with data displayed.
 
-Call `dired-view-data-initialization` can do some set up. It define key `C-c C-r` for dired-view-data in dired-mode, and
-
+Add below to make `dired-guess-shell-alist-user` recognize `dired-view-data` on some types of files.
 ``` elisp
 (add-to-list 'dired-guess-shell-alist-user
              (list "\\.\\(sas7bdat\\|xpt\\|rds\\|csv\\|rda\\|rdata\\)$"
@@ -25,7 +29,7 @@ Call `dired-view-data-initialization` can do some set up. It define key `C-c C-r
                         (if (eq system-type 'windows-nt)  ;; for w32
                             (w32-shell-execute "open" file-name nil 1))))))
 ```
-
+Or `(setq dired-view-data-guess-shell-alist-p t)` with `dired-view-data-mode`,
 which make `dired-do-shell-command` (`S-!`) for those files.
 
 ## Customization
