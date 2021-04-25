@@ -247,7 +247,7 @@ Argument FILE-NAME file-name to the dataset."
 
 ;;;###autoload
 (define-globalized-minor-mode dired-view-data-global-mode dired-view-data-mode
-  dired-view-data-mode-on)
+  dired-view-data-mode)
 
 (provide 'dired-view-data)
 ;;; dired-view-data.el ends here
