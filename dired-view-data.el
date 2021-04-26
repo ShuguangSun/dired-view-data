@@ -180,27 +180,10 @@ Argument FILE-NAME file-name to the dataset."
   "View data from dired."
   (interactive)
   (let* ((file-name (dired-get-file-for-visit)))
-  ;; (let* ((file-name (dired-get-filename)))
     (if (and (file-exists-p file-name)
              (not (file-directory-p file-name))
              (not (file-remote-p file-name)))
         (dired-view-data--do file-name))))
-
-
-(defun dired-view-data-initialization ()
-  "Initializate `dired-view-data'."
-  (interactive)
-  (define-key dired-mode-map (kbd "C-c C-r") #'dired-view-data)
-
-  (add-to-list 'dired-guess-shell-alist-user
-               (list "\\.\\(sas7bdat\\|xpt\\|rds\\|csv\\|rda\\|rdata\\)$"
-                     '(progn
-                        (if (y-or-n-p-with-timeout "Read to R? " 4 nil)
-                            (progn
-                              (dired-view-data--do (dired-get-filename))
-                              (keyboard-quit))
-                          (if (eq system-type 'windows-nt)  ;; for w32
-                              (w32-shell-execute "open" file-name nil 1)))))))
 
 
 (defvar dired-view-data-mode-hook nil
@@ -210,7 +193,7 @@ Argument FILE-NAME file-name to the dataset."
   "Add alist to `dired-guess-shell-alist-user'."
   (interactive)
   (when (derived-mode-p 'dired-mode)
-    (add-to-list (make-local-variable dired-guess-shell-alist-user)
+    (add-to-list (make-local-variable 'dired-guess-shell-alist-user)
                  (list "\\.\\(sas7bdat\\|xpt\\|rds\\|csv\\|rda\\|rdata\\)$"
                        '(progn
                           (if (y-or-n-p-with-timeout "Read to R? " 4 nil)
@@ -219,6 +202,12 @@ Argument FILE-NAME file-name to the dataset."
                                 (keyboard-quit))
                             (if (eq system-type 'windows-nt)  ;; for w32
                                 (w32-shell-execute "open" file-name nil 1))))))))
+
+
+(defun dired-view-data-assert-dired-buffer ()
+  (unless (derived-mode-p 'dired-mode)
+    (error "Buffer is not in dired-mode!")))
+
 
 (defvar dired-view-data-mode-map
   (let ((map (make-sparse-keymap)))
@@ -230,24 +219,27 @@ Argument FILE-NAME file-name to the dataset."
 ;;;###autoload
 (define-minor-mode dired-view-data-mode
   "Enable additional font locking in `dired-mode'."
+  :global nil
   :lighter " DVD"
   :keymap dired-view-data-mode-map
   :group 'dired-view-data
-  (when (derived-mode-p 'dired-mode)
-    (when dired-view-data-mode
-      (if dired-view-data-guess-shell-alist-p
-          (dired-view-data-guess-shell-alist))
-      (message "View data from dired via ESS-r."))))
+  ;; FIXME: enable it only in dired-mode
+  (dired-view-data-assert-dired-buffer)
+  (when dired-view-data-mode
+    (if dired-view-data-guess-shell-alist-p
+        (dired-view-data-guess-shell-alist))
+    (message "View data from dired via ESS-r enabled.")))
 
 ;;;###autoload
 (defun dired-view-data-mode-on ()
   "Turn on `dired-view-data-mode'."
   (interactive)
-  (dired-view-data-mode 1))
+  (when (derived-mode-p 'dired-mode)
+    (dired-view-data-mode)))
 
 ;;;###autoload
 (define-globalized-minor-mode dired-view-data-global-mode dired-view-data-mode
-  dired-view-data-mode)
+  dired-view-data-mode-on)
 
 (provide 'dired-view-data)
 ;;; dired-view-data.el ends here
