@@ -4,7 +4,7 @@ View data from dired via ess(-r)
 
 ## Installation
 
-Clone this repository (TODO:, or install from MELPA). Add the following to your `.emacs`:
+Clone this repository or install from MELPA. Add the following to your `.emacs`:
 
 ``` elisp
 (require 'dired-view-data)
@@ -12,10 +12,10 @@ Clone this repository (TODO:, or install from MELPA). Add the following to your 
 ;; global-minor-mode to `dired-mode'
 (dired-view-data-global-mode)
 ;; or call minor-mode in dired buffer mannualy
-(dired-view-data-mode 1)
+;; (dired-view-data-mode 1)
 ```
 
-In dired buffer, call `dired-view-data` (`V` or `C-c C-v`) on a data file (e.g., sas7bdat, xpt, rds, cs, rda or rdata), and buffer will pop up with data displayed.
+In dired buffer, call `dired-view-data` (`V` or `C-c C-v`) on a data file (e.g., sas7bdat, xpt, rds, csv, rda or rdata), and buffer will pop up with data displayed.
 
 Add below to make `dired-guess-shell-alist-user` recognize `dired-view-data` on some types of files.
 ``` elisp
