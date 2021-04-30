@@ -228,7 +228,9 @@ Argument FILE-NAME file-name to the dataset."
   (when dired-view-data-mode
     (if dired-view-data-guess-shell-alist-p
         (dired-view-data-guess-shell-alist))
-    (message "View data from dired via ESS-r enabled.")))
+    ;; It is annoying
+    ;; (message "View data from dired via ESS-r enabled.")
+    ))
 
 ;;;###autoload
 (defun dired-view-data-mode-on ()
