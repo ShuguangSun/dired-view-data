@@ -234,5 +234,21 @@ Argument FILE-NAME file-name to the dataset."
 (define-globalized-minor-mode dired-view-data-global-mode dired-view-data-mode
   dired-view-data-mode-on)
 
+(eval-when-compile (require 'wdired))
+(defvar-local dired-view-data--wdired-change nil
+  "Change to wdired-mode and back")
+
+(with-eval-after-load 'wdired
+  ;; wdired-change-to-wdired-mode
+  (add-hook 'wdired-mode-hook
+            #'(lambda () (when dired-view-data-mode
+                           (setq dired-view-data--wdired-change t)
+                           (dired-view-data-mode -1))))
+
+  ;; wdired-change-to-dired-mode
+  (advice-add 'wdired-change-to-dired-mode :after
+              #'(lambda () (when dired-view-data--wdired-change
+                             (dired-view-data-mode 1)))))
+
 (provide 'dired-view-data)
 ;;; dired-view-data.el ends here
