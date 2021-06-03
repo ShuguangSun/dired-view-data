@@ -1,3 +1,6 @@
+[![MELPA](https://melpa.org/packages/dired-view-data-badge.svg)](https://melpa.org/#/dired-view-data)
+[![MELPA Stable](https://stable.melpa.org/packages/dired-view-data-badge.svg)](https://stable.melpa.org/#/dired-view-data)
+
 # dired-view-data
 
 View data from dired via ess(-r)
