@@ -1,5 +1,8 @@
 [![MELPA](https://melpa.org/packages/dired-view-data-badge.svg)](https://melpa.org/#/dired-view-data)
 [![MELPA Stable](https://stable.melpa.org/packages/dired-view-data-badge.svg)](https://stable.melpa.org/#/dired-view-data)
+[![Build Status](https://github.com/ShuguangSun/dired-view-data/workflows/CI/badge.svg)](https://github.com/ShuguangSun/dired-view-data/actions)
+[![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+
 
 # dired-view-data
 
