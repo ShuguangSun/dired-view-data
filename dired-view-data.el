@@ -242,8 +242,8 @@ Argument FILE-NAME file-name to the dataset."
   ;; wdired-change-to-wdired-mode
   (add-hook 'wdired-mode-hook
             #'(lambda () (when dired-view-data-mode
-                           (setq dired-view-data--wdired-change t)
-                           (dired-view-data-mode -1))))
+                           (dired-view-data-mode -1)
+                           (setq dired-view-data--wdired-change t))))
 
   ;; wdired-change-to-dired-mode
   (advice-add 'wdired-change-to-dired-mode :after
