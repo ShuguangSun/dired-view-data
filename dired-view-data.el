@@ -45,7 +45,7 @@
 (require 'ess-r-mode)
 (require 'ess-inf)
 (require 'ess-view-data)
-(require 'ob-R) ;; org-babel-R-initiate-session
+;; (require 'ob-R) ;; org-babel-R-initiate-session
 
 
 (defgroup dired-view-data ()
@@ -117,7 +117,40 @@ by `ess-send-string'."
   :group 'dired-view-data)
 
 
+;; this is from ob-comint, renamed hear to avoid unnecessary load heavy org package
+(defun dired-view-data-R-buffer-livep (buffer)
+  "Check if BUFFER is a comint buffer with a live process."
+  (let ((buffer (when buffer (get-buffer buffer))))
+    (and buffer (buffer-live-p buffer) (get-buffer-process buffer) buffer)))
+
 (defvar ess-ask-for-ess-directory) ; dynamically scoped
+;; this is from ob-R, renamed hear to avoid unnecessary load heavy org package
+(defun dired-view-data-R-initiate-session (session params)
+  "If there is not a current R process then create one."
+  (unless (string= session "none")
+    (let ((session (or session "*R*"))
+	  (ess-ask-for-ess-directory
+	   (and (boundp 'ess-ask-for-ess-directory)
+		ess-ask-for-ess-directory
+		(not (cdr (assq :dir params))))))
+      (if (dired-view-data-R-buffer-livep session)
+	  session
+	(save-window-excursion
+	  (when (get-buffer session)
+	    ;; Session buffer exists, but with dead process
+	    (set-buffer session))
+	  (require 'ess) (R)
+	  (let ((R-proc (get-process (or ess-local-process-name
+					 ess-current-process-name))))
+	    (while (process-get R-proc 'callbacks)
+	      (ess-wait-for-process R-proc)))
+	  (rename-buffer
+	   (if (bufferp session)
+	       (buffer-name session)
+	     (if (stringp session)
+		 session
+	       (buffer-name))))
+	  (current-buffer))))))
 
 
 (defun dired-view-data-view (dt)
@@ -142,7 +175,7 @@ Argument FILE-NAME file-name to the dataset."
            displaydt
            session)
       (when (assq dt-type dired-view-data-data-name-format)
-        (setq session (org-babel-R-initiate-session
+        (setq session (dired-view-data-R-initiate-session
 		               dired-view-data-buffer-name-format
                        `((:dir ,dt-dir))))
         (setq dtdo (cdr (assq dt-type dired-view-data-data-name-format)))
