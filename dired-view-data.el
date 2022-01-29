@@ -90,7 +90,7 @@ A directory means start the R session from it globally."
 (defcustom dired-view-data-data-name-format
   '((sas7bdat  "`%1$s` <- haven::read_sas('%2$s')\n"
                dired-view-data-view)
-    (xpt       "`%1$s` <- haven::read_xpt('%2$s')\n"
+    (xpt       "`%1$s` <- {if(\"haven\" %%in%% installed.packages()[,\"Package\"]) haven::read_xpt('%2$s') else foreign::read.xport('%2$s')}\n"
                dired-view-data-view)
     (Rda       "`%1$s` <- get(load('%2$s')[1])\n"
                dired-view-data-view)
