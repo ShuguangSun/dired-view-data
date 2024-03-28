@@ -60,7 +60,7 @@
 
 (defcustom dired-view-data-use-DT-p nil
   "If t, using DT for display."
-  :type 'bool
+  :type 'boolean
   :group 'dired-view-data)
 
 (defcustom dired-view-data-history-file nil
@@ -70,7 +70,7 @@ If this is a relative file name, it is relative to `ess-history-directory'.
 Consequently, if that is set explicitly, you will have one history file
 for all projects.
 This is local version of `ess-history-file.'"
-  :type 'bool
+  :type 'boolean
   :group 'dired-view-data)
 
 (defcustom dired-view-data-default-directory nil
@@ -83,7 +83,7 @@ A directory means start the R session from it globally."
 
 (defcustom dired-view-data-guess-shell-alist-p t
   "Whether to add `dired-view-data' to `dired-guess-shell-alist-user'."
-  :type 'bool
+  :type 'boolean
   :group 'dired-view-data)
 
 
@@ -92,15 +92,17 @@ A directory means start the R session from it globally."
                dired-view-data-view)
     (xpt       "`%1$s` <- {if(\"haven\" %%in%% installed.packages()[,\"Package\"]) haven::read_xpt('%2$s') else foreign::read.xport('%2$s')}\n"
                dired-view-data-view)
-    (Rda       "`%1$s` <- get(load('%2$s')[1])\n"
+    (rda       "`%1$s` <- get(load('%2$s')[1])\n"
                dired-view-data-view)
-    (Rdata     "`%1$s` <- get(load('%2$s')[1])\n"
+    (rdata     "`%1$s` <- get(load('%2$s')[1])\n"
                dired-view-data-view)
     (rds       "`%1$s` <- readRDS('%2$s')\n"
                dired-view-data-view)
     (csv       "`%1$s` <- data.table::fread('%2$s')\n"
                dired-view-data-view))
   "Cons of data format (file extension) and code to read and display.
+
+The file extension as key should be in down-case.
 
 The code for reading will be send by `ess-send-string'.
 The code is a format string with to OBJECTS: filename as dataname,
@@ -168,7 +170,7 @@ Argument FILE-NAME file-name to the dataset."
     (let* ((default-directory (or dired-view-data-default-directory default-directory))
            (ess-history-file dired-view-data-history-file)
            (dt-name (file-name-base file-name))
-           (dt-type (intern (file-name-extension file-name)))
+           (dt-type (intern (downcase (file-name-extension file-name))))
 	       (dt-dir (file-name-directory file-name))
            dtdo
            readdt
